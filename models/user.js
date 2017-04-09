@@ -1,18 +1,36 @@
-var mongoose = require('mongoose');
+var mongoose   = require('mongoose'),
+    venue      = require('./venue'),
+    bcrypt     = require('bcrypt-nodejs'),
 
 var UserSchema = new mongoose.Schema({
-  name: String,
-  email: {
-    type: String,
-    unique: true,
-    required: true
+  local   : {
+    name    : String,
+    email   : {
+      type    : String,
+      unique  : true,
+      required: true
+    },
+    password: String
   },
   phoneNbr: Number,
-  zipCode: Number,
+  zipCode : Number,
   favDance: String,
-  favVenue: [venueSchema]
+  favVenue: [Venue.Schema],
+  isAdmin : {
+    type    :Boolean,
+    default : false
+  },
+
 })
 
-var User = mongoose.model('User', UserSchema)
+User.methods.encrypt = function(password){
+  return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+};
 
-module.exports = User
+User.methods.validPassword = function(password){
+  return bcrypt.compareSync(password, this.local.password)
+}
+
+var User       = mongoose.model('User', UserSchema)
+
+module.exports = User;
