@@ -14,7 +14,7 @@ var express        = require('express'),
     favicon        = require('serve-favicon'),
     path           = require('path'),
     passportConfig = require('./config/passport');
-    
+
 var dbUri = process.env.MONGODB_URI || 'mongodb://localhost/WSWD'
 mongoose.connect(dbUri)
 
@@ -28,7 +28,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
-app.use(session({ secret: 'secret!' }));
+app.use(session({ secret: 'Where?', cookie: {maxAge: 9999999} }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
@@ -46,5 +46,5 @@ app.use('/venues', venueRoutes)
 
 
 app.listen(port, function(req, res){
-  console.log('available on port ', port)
+  console.log('dancing on port ', port)
 })

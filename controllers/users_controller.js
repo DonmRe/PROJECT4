@@ -33,14 +33,7 @@ var User     = require('../models/user.js'),
 
     function getLogout(req, res, next) {
       req.logout();
-      // req.session.destroy(function(err) {
-      //     if (err) {
-      //       return next(err);
-      //     }
-      //     return res.send({
-      //       authenticated: req.isAuthenticated()
-      //     })
-      //   })
+
         res.redirect('/users/login');
       }
 
@@ -101,15 +94,15 @@ function userDestroy(req, res){
 
 
 module.exports = {
-  getLogin    : getLogin,
-  postLogin   : postLogin,
-  getSignup   : getSignup,
-  postSignup  : postSignup,
-  getLogout   : getLogout,
-  userIndex   : userIndex,
-  userCreate  : userCreate,
-  userShow    : userShow,
-  userEdit    : userEdit,
-  userUpdate  : userUpdate,
-  userDestroy : userDestroy
+  getLogin,
+  postLogin,
+  getSignup,
+  postSignup,
+  getLogout,
+  userIndex,
+  userCreate,
+  userShow,
+  userEdit,
+  userUpdate,
+  userDestroy
 }

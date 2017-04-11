@@ -1,7 +1,7 @@
 var dotenv    = require('dotenv').load({silent: true}),
     Yelp      = require('yelp-api-v3'),
-    Venue  = require('../models/venue'),
-    User   = require('../models/user');
+    Venue     = require('../models/venue'),
+    User      = require('../models/user');
 
 var yelp      = new Yelp({
   app_id      : process.env.YELP_ID,
@@ -9,79 +9,94 @@ var yelp      = new Yelp({
 });
 
 function searchVenues(req, res) {
-  var Term = req.query.term,
-      zipSearch  = req.query.zip || '90401';
+  var Term         = req.query.term,
+      zipCode      = req.query.zip || '90401';
 
-  yelp.search({term: Term, categories: ["danceclubs"], location: zipSearch, limit: 10})
+  yelp.search({term: Term, categories: ["danceclubs"], location: zipCode, limit: 10})
   .then(function (data) {
     var jsonString = JSON.parse(data);
-    res.json(jsonString.businesses);
+    res.status(200).send(jsonString.businesses);
 
   })
   .catch(function (err) {
       console.error(err);
-      res.json({message: "There was a problem", success: false})
+      res.status(404).send({message: "There was a problem", success: false})
   });
 }
-
-function createVenue(req, res) {
-  User.findById(req.user._id, function(err, user) {
-    if (err) throw err;
-
-    // user.favVenues.push({
-      // name      : req.body.name,
-      // image_url : req.body.image_url,
-      // address   : req.body.address,
-      // zipCode   : req.body.zip_code
-    });
-
-    user.save(function(err, user) {
-      if (err) throw err;
-
-      res.redirect('/');
-    });
-
-  };
-
-
-function updateVenue(req, res) {
-  var id = req.params.id;
-
-  User.findById(req.user._id, function(err, user) {
-    if (err) throw err;
-
-    var venue = user.venues.id(id);
-
-    user.save(function(err, updatedUser) {
-      if (err) throw err;
-      var updateVenue = updatedUser.venues.id(id);
-      res.json(updateVenue);
-    });
-
-  });
-}
-
-function deleteVenue(req, res) {
-  var id     = req.params.id,
-      userId = req.user._id;
-
-  User.findById(userId, function(err, user) {
-    if (err) throw err;
-
-    var venue = user.venues.id(id);
-
-    user.venues.pull(id);
-    user.save(function(err, updatedUser) {
-      if (err) throw err;
-
-      res.json({message: 'Venue has been removed from favorites'});
-    })
-  })
-}
+//
+// function favVenue(req, res) {
+//   User.findById(req.user.id, function(err, user) {
+//     if (err) res.status(404).send(err)
+//     console.log()
+//     user.favVenues.push({
+//       id                    : req.body.id,
+//       name                  : req.body.name,
+//       image                 : req.body.image_url,
+//       phone                 : req.body.phone,
+//       address               : req.body.address1,
+//       city                  : req.body.city,
+//       zipCode               : req.body.zip_code,
+//       // latitude              : req.body.coordinates.latitude,
+//       // longitude             : req.body.coordinates.longitude,
+//       rating                : req.body.rating,
+//       reviews               : req.body.review_count,
+//       url                   : req.body.url
+//     });
+//     user.save(function(err, user) {
+//       if (err)res.status(404).send(err)
+//
+//       res.redirect('/venues/favorites');
+//     });
+//   })
+// };
+//
+// function favVenueIndex(req, res){
+//   var favVenues = user.favVenues.id(id);
+//     user.favVenues.find({}, function(err, venues){
+//       if(err) res.status(404).send(err)
+//       res.status(200).send(venues)
+//     })
+// }
+//
+// function updateVenue(req, res) {
+//   var id = req.params.id;
+//
+//   User.findById(req.user._id, function(err, user) {
+//     if (err) res.status(404).send(err)
+//
+//     var venue = user.favVenues.id(id);
+//
+//     user.save(function(err, updatedUser) {
+//       if (err) res.status(404).send(err);
+//       var updateVenue = updatedUser.favVenues.id(id);
+//       res.status(200).send(updateVenue);
+//     });
+//
+//   });
+// }
+//
+// function deleteVenue(req, res) {
+//   var id     = req.params.id,
+//       userId = req.user._id;
+//
+//   User.findById(userId, function(err, user) {
+//     if (err) res.status(404).send(err)
+//
+//     var venue = user.favVenues.id(id);
+//
+//     user.favVenues.pull(id);
+//     user.save(function(err, updatedUser) {
+//       if (err) res.status(500).send(err);
+//
+//       res.status(202).send({message: 'Venue has been removed from favorites'});
+//     })
+//   })
+// }
 
 module.exports = {
-  searchVenues: searchVenues,
-  createVenue : createVenue,
-  updateVenue : updateVenue,
-  deleteVenue : deleteVenue
+  searchVenues,
+  // favVenue,
+  // favVenueIndex,
+  // updateVenue,
+  // deleteVenue
 }

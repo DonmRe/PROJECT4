@@ -10,5 +10,5 @@ function apiIndex(req, res){
 
 
 module.exports = {
-  apiIndex: apiIndex
+  apiIndex
 }

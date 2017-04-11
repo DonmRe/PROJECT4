@@ -3,22 +3,22 @@ var mongoose   = require('mongoose'),
     bcrypt     = require('bcrypt-nodejs')
 
 var User = new mongoose.Schema({
-  local   : {
-    email   : {
+  local     : {
+     email   : {
       type    : String,
       unique  : true,
       required: true
     },
     password: String
   },
-  name    : String,
-  phoneNbr: Number,
-  zipCode : Number,
-  favDance: String,
-  favVenue: [Venue.schema],
-  isAdmin : {
-    type    :Boolean,
-    default : false
+  name      : String,
+  phoneNbr  : Number,
+  zipCode   : Number,
+  favDance  : String,
+  favVenues : [Venue.schema],
+  isAdmin   : {
+     type    : Boolean,
+     default : false
   },
 
 })

@@ -26,7 +26,6 @@ var express         = require('express'),
 
 //this is for users
   router.route('/')
-  // .get(isAdmin, userIndex)
   .get(isAdmin, userIndex)
   .post(userCreate)
 
@@ -42,7 +41,7 @@ var express         = require('express'),
   .get(getLogout)
 
   router.route('/:id/edit')
-    .get(userEdit)
+  .get(userEdit)
 
   router.route('/:id')
   .get(userShow)
