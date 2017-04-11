@@ -28,11 +28,11 @@ function createVenue(req, res) {
   User.findById(req.user._id, function(err, user) {
     if (err) throw err;
 
-    user.favVenues.push({
-      name      : req.body.name,
-      image_url : req.body.image_url,
-      address   : req.body.address,
-      zipCode   : req.body.zip_code
+    // user.favVenues.push({
+      // name      : req.body.name,
+      // image_url : req.body.image_url,
+      // address   : req.body.address,
+      // zipCode   : req.body.zip_code
     });
 
     user.save(function(err, user) {
@@ -41,8 +41,8 @@ function createVenue(req, res) {
       res.redirect('/');
     });
 
-  });
-}
+  };
+
 
 function updateVenue(req, res) {
   var id = req.params.id;
@@ -81,7 +81,7 @@ function deleteVenue(req, res) {
 
 module.exports = {
   searchVenues: searchVenues,
-  createVenue: createVenue,
-  updateVenue: updateVenue,
-  deleteVenue: deleteVenue
+  createVenue : createVenue,
+  updateVenue : updateVenue,
+  deleteVenue : deleteVenue
 }

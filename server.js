@@ -13,9 +13,8 @@ var express        = require('express'),
     venueRoutes    = require('./config/venue_routes'),
     favicon        = require('serve-favicon'),
     path           = require('path'),
-    passportConfig = require('./config/passport'),
-    indexCtrl      = require('./controllers/index.js')
-
+    passportConfig = require('./config/passport');
+    
 var dbUri = process.env.MONGODB_URI || 'mongodb://localhost/WSWD'
 mongoose.connect(dbUri)
 
