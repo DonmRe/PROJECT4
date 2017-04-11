@@ -1,5 +1,50 @@
-var User = require('../models/user.js'),
+var User     = require('../models/user.js'),
+    passport = require('passport'),
+    Venue    = require('../models/venue.js')
 
+
+    function getSignup(req, res) {
+      res.render('authentication/signup.ejs', {message: req.flash('signupMessage')})
+    }
+
+    function postSignup(req, res) {
+      var signupStrategy = passport.authenticate('local-signup', {
+          successRedirect: '/users',
+          failureRedirect: '/users/signup',
+          failureFlash: true
+        }
+      )
+      return signupStrategy(req, res);
+    }
+
+    function getLogin(req, res) {
+      res.render('/', {message: req.flash('loginMessage')})
+    }
+
+    function postLogin(req, res) {
+      var loginProperty = passport.authenticate('local-login', {
+        successRedirect: '/users',
+        failureRedirect: '/users/login',
+        failureFlash: true
+      })
+
+      return loginProperty(req, res)
+    }
+
+    function getLogout(req, res, next) {
+      req.logout();
+      // req.session.destroy(function(err) {
+      //     if (err) {
+      //       return next(err);
+      //     }
+      //     return res.send({
+      //       authenticated: req.isAuthenticated()
+      //     })
+      //   })
+        res.redirect('/users/login');
+      }
+
+/////////////////////////////////
 function userIndex(req, res){
     User.find({}, function(err, users){
       if(err) res.status(404).send(err)
@@ -8,11 +53,10 @@ function userIndex(req, res){
 }
 
 function userCreate(req, res, next){
-    var User = new User(req.body)
-
-    user.save(function(err, user){
-      if(err) res.status(500).send(err)
-      res.status(201).send(user)
+    var newUser = passport.authenticate('local-signup', {
+      successRedirect: '/users',
+      failureRedirect: '/users/signup',
+      failureFlash: true
     })
 }
 
@@ -22,6 +66,15 @@ function userShow(req, res){
       res.status(200).send(user)
     })
 }
+
+function userEdit(req, res){
+  var id = req.params.id
+  User.findById(id, function(err, user) {
+    if (err) res.status(404).send(err)
+      res.status(200).send(user)
+  })
+}
+
 
 function userUpdate(req, res){
     User.findById({_id: req.params.id}, function(err){
@@ -48,9 +101,15 @@ function userDestroy(req, res){
 
 
 module.exports = {
-  userIndex  : userIndex,
-  userCreate : userCreate,
-  userShow   : userShow,
-  userUpdate : userUpdate,
-  userDestroy: userDestroy
+  getLogin    : getLogin,
+  postLogin   : postLogin,
+  getSignup   : getSignup,
+  postSignup  : postSignup,
+  getLogout   : getLogout,
+  userIndex   : userIndex,
+  userCreate  : userCreate,
+  userShow    : userShow,
+  userEdit    : userEdit,
+  userUpdate  : userUpdate,
+  userDestroy : userDestroy
 }

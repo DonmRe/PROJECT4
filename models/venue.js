@@ -1,15 +1,15 @@
 var mongoose    = require('mongoose'),
     User        = require('./user')
 
-    
-var venueSchema = new mongoose.Schema({
+
+var Venue = new mongoose.Schema({
   name     : String,
   address  : String,
   zip_code : Number,
   image_url: String,
   phone    : Number,
   rating   : String,
-  dance    : String
+  dance    : String,
   favorite : {
     type     : Boolean,
     default  : false
@@ -21,6 +21,6 @@ var venueSchema = new mongoose.Schema({
   }
 })
 
-var Venue       = mongoose.model('Venue', venueSchema)
 
-module.exports  = Venue
+
+module.exports  = mongoose.model('Venue', Venue)

@@ -1,10 +1,9 @@
 var mongoose   = require('mongoose'),
-    venue      = require('./venue'),
-    bcrypt     = require('bcrypt-nodejs'),
+    Venue      = require('./venue'),
+    bcrypt     = require('bcrypt-nodejs')
 
-var UserSchema = new mongoose.Schema({
+var User = new mongoose.Schema({
   local   : {
-    name    : String,
     email   : {
       type    : String,
       unique  : true,
@@ -12,10 +11,11 @@ var UserSchema = new mongoose.Schema({
     },
     password: String
   },
+  name    : String,
   phoneNbr: Number,
   zipCode : Number,
   favDance: String,
-  favVenue: [Venue.Schema],
+  favVenue: [Venue.schema],
   isAdmin : {
     type    :Boolean,
     default : false
@@ -31,6 +31,4 @@ User.methods.validPassword = function(password){
   return bcrypt.compareSync(password, this.local.password)
 }
 
-var User       = mongoose.model('User', UserSchema)
-
-module.exports = User;
+module.exports = mongoose.model('User', User)
