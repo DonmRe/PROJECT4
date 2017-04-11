@@ -12,7 +12,7 @@ function searchVenues(req, res) {
   var Term         = req.query.term,
       zipCode      = req.query.zip || '90401';
 
-  yelp.search({term: Term, categories: "danceclubs", location: zipCode, limit: 10})
+  yelp.search({term: 'Tango', categories: "danceclubs", location: '91505', limit: 10})
   .then(function (data) {
     var jsonString = JSON.parse(data);
     res.status(200).send(jsonString.businesses);
