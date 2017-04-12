@@ -1,19 +1,16 @@
-var dotenv    = require('dotenv').load({silent: true}),
-    Yelp      = require('yelpv3'),
-    Venue     = require('../models/venue'),
-    User      = require('../models/user');
+var dotenv = require('dotenv').load({
+    silent: true
+  }),
+  Yelp = require('yelpv3'),
+  Venue = require('../models/venue'),
+  User = require('../models/user');
 
-var yelp      = new Yelp({
-  app_id      : process.env.YELP_ID,
-  app_secret  : process.env.YELP_SECRET
+var yelp = new Yelp({
+  app_id: process.env.YELP_ID,
+  app_secret: process.env.YELP_SECRET
 });
 
 function searchVenues(req, res) {
-  // var Term         = req.query.term,
-  //     zipCode      = req.query.zip || '90401';
-  //
-  // yelp.search({term: Term, categories: "danceclubs", location: zipCode, limit: 10})
-  // .then(function (data) {
   var searchQueries = {
     categories: ['danceclubs'],
     location: '90401'
@@ -21,79 +18,85 @@ function searchVenues(req, res) {
 
   if (req.query.term) searchQueries.term = req.query.term
   if (req.query.zip) searchQueries.location = req.query.zip
-
-  // yelp.search({term: searchTerm, location: zipSearch, open_now: openNow, categories: 'vegan,vegetarian,farmersmarket', price: price})
   console.log(searchQueries)
 
   yelp.search(searchQueries)
     .then(function(data) {
       var jsonString = JSON.parse(data);
       res.status(200).send(jsonString.businesses);
-      // var jsonString = JSON.parse(data);
-      // res.send(jsonString.businesses);
-
     })
-    .catch(function (err) {
+    .catch(function(err) {
       console.error(err);
-      res.status(404).json({err: err, message: "There was a problem", success: false})
-
-    //
-  });
+      res.status(404).json({
+        err: err,
+        message: "There was a problem",
+        success: false
+      })
+    });
 }
 
-
 function favVenue(req, res) {
-  console.log(req.user)
+  // // console.log(req.user)
   User.findById(req.user.id, function(err, user) {
-    if (err) res.status(404).send(err)
-    console.log()
-    Venue.findOne({yelp_id: req.params.id}, function(err, venue) {
-      console.log(venue)
-      if(venue) {
-        user.favVenues.push(venue);
-        user.save(function(err, user) {
-          if (err)res.status(404).send(err)
+      if (err) res.status(404).send(err)
+  //
+  //
+      Venue.findOne({yelp_id: req.params.yelp_id}, function(err, venue) {
+          if (venue) {user.favVenues.push(venue);
+            user.save(function(err, user) {
+              if (err) res.status(404).send(err)
+              res.json({message: "Boom! Added to favorites.", success: true, user });
+            });
+          } else {
+              var searchQueries = {
+                categories: ['danceclubs'],
+                location: '90401'
+              }
+            if (req.query.term) searchQueries.term = req.query.term
+            if (req.query.zip) searchQueries.location = req.query.zip
+            yelp.search(searchQueries)
+              .then(function(data) {
+                var arr = JSON.parse(data)
+                // console.log(arr)
+                var newVenue = arr.find(venue => venue.yelp_id == req.params.id)
+                console.log(newVenue)
+                var venueFields = {
+                  yelp_id: newVenue.yelp_id,
+                  name: newVenue.name,
+                  image: newVenue.image_url,
+                  phone: newVenue.phone,
+                  address: newVenue.address1,
+                  city: newVenue.city,
+                  zipCode: newVenue.zip_code,
+                  // latitude              : newVenue.coordinates.latitude,
+                  // longitude             : newVenue.coordinates.longitude,
+                  rating: newVenue.rating,
+                  reviews: newVenue.review_count,
+                  url: newVenue.url
+                }
 
-          res.json({message: "Boom! Added to favorites.", success: true, user});
-        });
+                Venue.create(venueFields, function(err, venue) {
+                  user.favVenues.push(venue);
+                  user.save(function(err, user) {
+                    if (err) res.status(404).send(err)
+                    res.json({message: "Boom! Venue created and added to favorites", success: true, user});
+                  });
+                })
 
-      } else {
 
-        var venueFields = {
-          yelp_id               : req.body.yelp_id,
-          name                  : req.body.name,
-          image                 : req.body.image_url,
-          phone                 : req.body.phone,
-          address               : req.body.address1,
-          city                  : req.body.city,
-          zipCode               : req.body.zip_code,
-          // latitude              : req.body.coordinates.latitude,
-          // longitude             : req.body.coordinates.longitude,
-          rating                : req.body.rating,
-          reviews               : req.body.review_count,
-          url                   : req.body.url
-        }
+              })
+            }
+          })
+      })
 
-        Venue.create(venueFields, function(err, venue) {
-          user.favVenues.push(venue);
-          user.save(function(err, user) {
-            if (err)res.status(404).send(err)
-
-            res.json({message: "Boom! Venue created and added to favorites", success: true, user});
-          });
-        })
-
-      }
-    })
-  })
 };
 
-function favVenueIndex(req, res){
+function favVenueIndex(req, res) {
   var favVenues = user.favVenues.id(id);
-    user.favVenues.find({}, function(err, venues){
-      if(err) res.status(404).send(err)
-      res.status(200).send(venues)
-    })
+  user.favVenues.find({}, function(err, venues) {
+    if (err) res.status(404).send(err)
+    res.status(200).send(venues)
+  })
 }
 
 function updateVenue(req, res) {
@@ -113,8 +116,8 @@ function updateVenue(req, res) {
 }
 
 function deleteVenue(req, res) {
-  var id     = req.params.id,
-      userId = req.user._id;
+  var id = req.params.id,
+    userId = req.user._id;
 
   User.findById(userId, function(err, user) {
     if (err) res.status(404).send(err)
@@ -125,7 +128,9 @@ function deleteVenue(req, res) {
     user.save(function(err, updatedUser) {
       if (err) res.status(500).send(err);
 
-      res.status(202).send({message: 'Venue has been removed from favorites'});
+      res.status(202).send({
+        message: 'Venue has been removed from favorites'
+      });
     })
   })
 }

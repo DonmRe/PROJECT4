@@ -4,7 +4,7 @@ var User     = require('../models/user.js'),
 
 
     function getSignup(req, res) {
-      res.render('authentication/signup.ejs', {message: req.flash('signupMessage')})
+      res.render('/', {message: req.flash('signupMessage')})
     }
 
     function postSignup(req, res) {
