@@ -15,7 +15,7 @@ function searchVenues(req, res) {
   // yelp.search({term: Term, categories: "danceclubs", location: zipCode, limit: 10})
   // .then(function (data) {
   var searchQueries = {
-    categories: 'danceclubs,dancerestaurants',
+    categories: 'danceclubs',
     location: '90401'
   }
 
