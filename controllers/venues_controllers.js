@@ -28,94 +28,112 @@ function searchVenues(req, res) {
   yelp.search(searchQueries)
     .then(function(data) {
       var jsonString = JSON.parse(data);
-      res.send(jsonString.businesses);
+      res.status(200).send(jsonString.businesses);
+      // var jsonString = JSON.parse(data);
+      // res.send(jsonString.businesses);
 
     })
     .catch(function (err) {
       console.error(err);
       res.status(404).json({err: err, message: "There was a problem", success: false})
-    });
-  }
 
     //
-    // var jsonString = JSON.parse(data);
-    // res.status(200).send(jsonString.businesses);
+  });
+}
 
-  // })
-//
-// function favVenue(req, res) {
-//   User.findById(req.user.id, function(err, user) {
-//     if (err) res.status(404).send(err)
-//     console.log()
-//     user.favVenues.push({
-//       id                    : req.body.id,
-//       name                  : req.body.name,
-//       image                 : req.body.image_url,
-//       phone                 : req.body.phone,
-//       address               : req.body.address1,
-//       city                  : req.body.city,
-//       zipCode               : req.body.zip_code,
-//       // latitude              : req.body.coordinates.latitude,
-//       // longitude             : req.body.coordinates.longitude,
-//       rating                : req.body.rating,
-//       reviews               : req.body.review_count,
-//       url                   : req.body.url
-//     });
-//     user.save(function(err, user) {
-//       if (err)res.status(404).send(err)
-//
-//       res.redirect('/venues/favorites');
-//     });
-//   })
-// };
-//
-// function favVenueIndex(req, res){
-//   var favVenues = user.favVenues.id(id);
-//     user.favVenues.find({}, function(err, venues){
-//       if(err) res.status(404).send(err)
-//       res.status(200).send(venues)
-//     })
-// }
-//
-// function updateVenue(req, res) {
-//   var id = req.params.id;
-//
-//   User.findById(req.user._id, function(err, user) {
-//     if (err) res.status(404).send(err)
-//
-//     var venue = user.favVenues.id(id);
-//
-//     user.save(function(err, updatedUser) {
-//       if (err) res.status(404).send(err);
-//       var updateVenue = updatedUser.favVenues.id(id);
-//       res.status(200).send(updateVenue);
-//     });
-//
-//   });
-// }
-//
-// function deleteVenue(req, res) {
-//   var id     = req.params.id,
-//       userId = req.user._id;
-//
-//   User.findById(userId, function(err, user) {
-//     if (err) res.status(404).send(err)
-//
-//     var venue = user.favVenues.id(id);
-//
-//     user.favVenues.pull(id);
-//     user.save(function(err, updatedUser) {
-//       if (err) res.status(500).send(err);
-//
-//       res.status(202).send({message: 'Venue has been removed from favorites'});
-//     })
-//   })
-// }
+
+function favVenue(req, res) {
+  console.log(req.user)
+  User.findById(req.user.id, function(err, user) {
+    if (err) res.status(404).send(err)
+    console.log()
+    Venue.findOne({yelp_id: req.params.id}, function(err, venue) {
+      console.log(venue)
+      if(venue) {
+        user.favVenues.push(venue);
+        user.save(function(err, user) {
+          if (err)res.status(404).send(err)
+
+          res.json({message: "Boom! Added to favorites.", success: true, user});
+        });
+
+      } else {
+
+        var venueFields = {
+          yelp_id               : req.body.yelp_id,
+          name                  : req.body.name,
+          image                 : req.body.image_url,
+          phone                 : req.body.phone,
+          address               : req.body.address1,
+          city                  : req.body.city,
+          zipCode               : req.body.zip_code,
+          // latitude              : req.body.coordinates.latitude,
+          // longitude             : req.body.coordinates.longitude,
+          rating                : req.body.rating,
+          reviews               : req.body.review_count,
+          url                   : req.body.url
+        }
+
+        Venue.create(venueFields, function(err, venue) {
+          user.favVenues.push(venue);
+          user.save(function(err, user) {
+            if (err)res.status(404).send(err)
+
+            res.json({message: "Boom! Venue created and added to favorites", success: true, user});
+          });
+        })
+
+      }
+    })
+  })
+};
+
+function favVenueIndex(req, res){
+  var favVenues = user.favVenues.id(id);
+    user.favVenues.find({}, function(err, venues){
+      if(err) res.status(404).send(err)
+      res.status(200).send(venues)
+    })
+}
+
+function updateVenue(req, res) {
+  var id = req.params.id;
+
+  User.findById(req.user._id, function(err, user) {
+    if (err) res.status(404).send(err)
+
+    var venue = user.favVenues.id(id);
+
+    user.save(function(err, updatedUser) {
+      if (err) res.status(404).send(err);
+      var updateVenue = updatedUser.favVenues.id(id);
+      res.status(200).send(updateVenue);
+    });
+  });
+}
+
+function deleteVenue(req, res) {
+  var id     = req.params.id,
+      userId = req.user._id;
+
+  User.findById(userId, function(err, user) {
+    if (err) res.status(404).send(err)
+
+    var venue = user.favVenues.id(id);
+
+    user.favVenues.pull(id);
+    user.save(function(err, updatedUser) {
+      if (err) res.status(500).send(err);
+
+      res.status(202).send({message: 'Venue has been removed from favorites'});
+    })
+  })
+}
 
 module.exports = {
   searchVenues,
-  // favVenue,
-  // favVenueIndex,
-  // updateVenue,
-  // deleteVenue
+  favVenue,
+  favVenueIndex,
+  updateVenue,
+  deleteVenue
 }

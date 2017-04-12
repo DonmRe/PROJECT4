@@ -27,7 +27,8 @@ var express         = require('express'),
 //this is for users
   router.route('/')
   .get(isAdmin, userIndex)
-  .post(userCreate)
+  // .get(userIndex)
+  // .post(userCreate)
 
   router.route('/signup')
   .get(getSignup)

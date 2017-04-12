@@ -15,7 +15,8 @@ var User = new mongoose.Schema({
   phoneNbr  : Number,
   zipCode   : Number,
   favDance  : String,
-  favVenues : [Venue.schema],
+  // favVenues : [Venue.schema],
+  favVenues : [{type: mongoose.Schema.Types.ObjectId, ref: 'Venue'}],
   isAdmin   : {
      type    : Boolean,
      default : false

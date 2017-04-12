@@ -39,9 +39,13 @@ var User     = require('../models/user.js'),
 
 /////////////////////////////////
 function userIndex(req, res){
-    User.find({}, function(err, users){
-      if(err) res.status(404).send(err)
-      res.status(200).send(users)
+    // User.find({}).populate('favVenues').exec(function(err, users){
+    //   if(err) res.status(404).send(err)
+    //   res.status(200).send(users)
+    // })
+
+    User.find({}).populate('favVenues').exec().then((users) => {
+      res.json(users)
     })
 }
 
@@ -54,7 +58,7 @@ function userCreate(req, res, next){
 }
 
 function userShow(req, res){
-    User.find({_id: req.params.id}, function(err, user){
+    User.find({_id: req.params.id}).populate('favVenues').exec(function(err, user){
       if(err) res.status(404).send(err)
       res.status(200).send(user)
     })
