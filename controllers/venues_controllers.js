@@ -1,5 +1,5 @@
 var dotenv    = require('dotenv').load({silent: true}),
-    Yelp      = require('yelp-api-v3'),
+    Yelp      = require('yelpv3'),
     Venue     = require('../models/venue'),
     User      = require('../models/user');
 
@@ -15,15 +15,12 @@ function searchVenues(req, res) {
   // yelp.search({term: Term, categories: "danceclubs", location: zipCode, limit: 10})
   // .then(function (data) {
   var searchQueries = {
-    categories: 'danceclubs,dancerestaurants'
+    categories: 'danceclubs,dancerestaurants',
+    location: '90401'
   }
 
   if (req.query.term) searchQueries.term = req.query.term
-  if (req.query.zip) {
-    searchQueries.location = req.query.zip
-  } else {
-    searchQueries.location = '90401'
-  }
+  if (req.query.zip) searchQueries.location = req.query.zip
 
   // yelp.search({term: searchTerm, location: zipSearch, open_now: openNow, categories: 'vegan,vegetarian,farmersmarket', price: price})
   console.log(searchQueries)
