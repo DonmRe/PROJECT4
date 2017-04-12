@@ -28,7 +28,7 @@ function searchVenues(req, res) {
   yelp.search(searchQueries)
     .then(function(data) {
       var jsonString = JSON.parse(data);
-      res.json(jsonString.businesses);
+      res.send(jsonString.businesses);
 
     })
     .catch(function (err) {
