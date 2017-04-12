@@ -1,5 +1,5 @@
 var dotenv    = require('dotenv').load({silent: true}),
-    Yelp      = require('yelpv3'),
+    Yelp      = require('yelp-api-v3'),
     Venue     = require('../models/venue'),
     User      = require('../models/user');
 
