@@ -39,7 +39,7 @@ function searchVenues(req, res) {
   // })
   .catch(function (err) {
       console.error(err);
-      res.status(404).send({message: "There was a problem", success: false})
+      res.status(404).json({err: err, message: "There was a problem", success: false})
   });
 }
 //
