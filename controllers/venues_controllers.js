@@ -9,15 +9,37 @@ var yelp      = new Yelp({
 });
 
 function searchVenues(req, res) {
-  var Term         = req.query.term,
-      zipCode      = req.query.zip || '90401';
+  // var Term         = req.query.term,
+  //     zipCode      = req.query.zip || '90401';
+  //
+  // yelp.search({term: Term, categories: "danceclubs", location: zipCode, limit: 10})
+  // .then(function (data) {
+  var searchQueries = {
+    categories: 'danceclubs,dancerestaurants'
+  }
 
-  yelp.search({term: 'Tango', categories: "danceclubs", location: '91505', limit: 10})
-  .then(function (data) {
-    var jsonString = JSON.parse(data);
-    res.status(200).send(jsonString.businesses);
+  if (req.query.term) searchQueries.term = req.query.term
+  if (req.query.zip) {
+    searchQueries.location = req.query.zip
+  } else {
+    searchQueries.location = '90401'
+  }
 
-  })
+  // yelp.search({term: searchTerm, location: zipSearch, open_now: openNow, categories: 'vegan,vegetarian,farmersmarket', price: price})
+  console.log(searchQueries)
+
+  yelp.search(searchQueries)
+    .then(function(data) {
+      var jsonString = JSON.parse(data);
+      res.json({location: jsonString.businesses});
+
+    })
+
+    //
+    // var jsonString = JSON.parse(data);
+    // res.status(200).send(jsonString.businesses);
+
+  // })
   .catch(function (err) {
       console.error(err);
       res.status(404).send({message: "There was a problem", success: false})
