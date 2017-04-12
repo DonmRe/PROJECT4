@@ -42,7 +42,7 @@ app.use(function (req, res, next){
 })
 
 app.use('/users', userRoutes)
-app.use('/', venueRoutes)
+app.use('/venues', venueRoutes)
 
 
 app.listen(port, function(req, res){
