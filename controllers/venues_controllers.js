@@ -28,20 +28,20 @@ function searchVenues(req, res) {
   yelp.search(searchQueries)
     .then(function(data) {
       var jsonString = JSON.parse(data);
-      res.json({location: jsonString.businesses});
+      res.json(jsonString.businesses);
 
     })
+    .catch(function (err) {
+      console.error(err);
+      res.status(404).json({err: err, message: "There was a problem", success: false})
+    });
+  }
 
     //
     // var jsonString = JSON.parse(data);
     // res.status(200).send(jsonString.businesses);
 
   // })
-  .catch(function (err) {
-      console.error(err);
-      res.status(404).json({err: err, message: "There was a problem", success: false})
-  });
-}
 //
 // function favVenue(req, res) {
 //   User.findById(req.user.id, function(err, user) {
