@@ -13,7 +13,8 @@ var express        = require('express'),
     venueRoutes    = require('./config/venue_routes'),
     favicon        = require('serve-favicon'),
     path           = require('path'),
-    passportConfig = require('./config/passport');
+    passportConfig = require('./config/passport'),
+    cors           = require('cors');
 
 var dbUri = process.env.MONGODB_URI || 'mongodb://localhost/WSWD'
 mongoose.connect(dbUri)
@@ -22,6 +23,7 @@ app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 
 // middleware
+app.use(cors())
 app.use(logger('dev'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))

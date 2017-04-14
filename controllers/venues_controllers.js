@@ -82,13 +82,10 @@ function favVenue(req, res) {
                     res.json({message: "Boom! Venue created and added to favorites", success: true, user});
                   });
                 })
-
-
               })
             }
           })
       })
-
 };
 
 function favVenueIndex(req, res) {
